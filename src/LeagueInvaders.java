@@ -12,15 +12,26 @@ public class LeagueInvaders {
 	final int width = 500;
 	final int height = 800;
 
+	GamePanel gp;
+
 	// CONSTRUCTOR
 	LeagueInvaders() {
 		mainFrame = new JFrame();
+		gp = new GamePanel();
+
 		setup();
+
 	}
 
 	// METHODS
 	void setup() {
+		mainFrame.add(gp);
+		mainFrame.addKeyListener(gp);
+
 		mainFrame.setVisible(true);
-		// mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setSize(width, height);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		gp.startGame();
 	}
 }
