@@ -17,6 +17,9 @@ public class LeagueInvaders {
 	// CONSTRUCTOR
 	LeagueInvaders() {
 		mainFrame = new JFrame();
+
+		mainFrame.setIconImage(gp.spacelmg);
+
 		gp = new GamePanel();
 
 		setup();

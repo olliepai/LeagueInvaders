@@ -1,32 +1,32 @@
-import java.awt.Color;
 import java.awt.Graphics;
 
 public class Rocketship extends GameObject {
 	// MEMBER VARIABLES
 	int speed;
 
+	boolean right = false;
+	boolean left = false;
+
 	// CONSTRUCTOR
 	Rocketship(int x, int y, int width, int height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		super(x, y, width, height);
 
 		speed = 5;
 	}
 
 	// METHODS
 	void update() {
-		if (GamePanel.arrowCase == 1) {
-			x += 1;
+		super.update();
+
+		if (right) {
+			x += 5;
 		}
-		if (GamePanel.arrowCase == 2) {
-			x -= 1;
+		if (left) {
+			x -= 5;
 		}
 	}
 
 	void draw(Graphics g) {
-		g.setColor(Color.BLUE);
-		g.fillRect(x, y, width, height);
+		g.drawImage(GamePanel.rocketlmg, x, y, width, height, null);
 	}
 }

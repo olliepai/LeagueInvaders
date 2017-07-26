@@ -5,7 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -26,12 +29,32 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	static int arrowCase = 0;
 
+	ObjectManager om = new ObjectManager();
+
+	public static BufferedImage alienlmg;
+	public static BufferedImage rocketlmg;
+	public static BufferedImage bulletlmg;
+	public static BufferedImage spacelmg;
+
 	// CONSTRUCTOR
 	GamePanel() {
 		timer = new Timer(1000 / 60, this);
 
 		titleFont = new Font("Arial", Font.PLAIN, 48);
 		textFont = new Font("Arial", Font.PLAIN, 24);
+
+		om.addObject(rs);
+
+		try {
+			alienlmg = ImageIO.read(this.getClass().getResourceAsStream("alien.png"));
+			rocketlmg = ImageIO.read(this.getClass().getResourceAsStream("rocket.png"));
+			bulletlmg = ImageIO.read(this.getClass().getResourceAsStream("bullet.png"));
+			spacelmg = ImageIO.read(this.getClass().getResourceAsStream("space.png"));
+		}
+
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// METHODS
@@ -77,20 +100,27 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			arrowCase = 1;
-			rs.update();
+			rs.right = true;
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			arrowCase = 2;
-			rs.update();
+			rs.left = true;
 		}
 
+		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+			om.addObject(new Projectile(rs.x + 20, rs.y, 10, 10));
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			rs.right = false;
+		}
 
+		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			rs.left = false;
+		}
 	}
 
 	void updateMenuState() {
@@ -98,7 +128,23 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 
 	void updateGameState() {
-		rs.update();
+		om.manageEnemies();
+
+		om.update();
+
+		om.checkCollision();
+
+		if (rs.isAlive == false) {
+			currentState = END_STATE;
+
+			om.reset();
+
+			rs = new Rocketship(250, 700, 50, 50);
+
+			om.addObject(rs);
+		}
+
+		om.getScore();
 	}
 
 	void updateEndState() {
@@ -121,7 +167,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, 500, 800);
 
-		rs.draw(g);
+		om.draw(g);
 	}
 
 	void drawEndState(Graphics g) {
@@ -132,7 +178,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		g.setFont(titleFont);
 		g.drawString("GAME OVER", 100, 100);
 		g.setFont(textFont);
-		g.drawString("You killed 0 aliens", 150, 300);
+		g.drawString("You killed " + om.getScore() + " aliens", 150, 300);
 		g.drawString("Press BACKSPACE to Restart", 100, 500);
 	}
 
