@@ -10,7 +10,7 @@ public class Alien extends GameObject {
 	void update() {
 		super.update();
 
-		y++;
+		y += 3;
 	}
 
 	void draw(Graphics g) {
